@@ -3,6 +3,7 @@ package com.ab5y.pmpquiz.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 
+import com.ab5y.pmpquiz.QuestionActivity;
 import com.ab5y.pmpquiz.R;
 import com.ab5y.pmpquiz.models.Option;
 
@@ -20,9 +22,9 @@ import java.util.List;
  */
 public class OptionsAdapter extends ArrayAdapter<Option> {
 
-    Context context;
-    int resource;
-    public List<Option> data = null;
+    private Context context;
+    private int resource;
+    private List<Option> data = null;
 
     private static final String LOG = "OPTIONSADAPTER";
 
@@ -54,7 +56,17 @@ public class OptionsAdapter extends ArrayAdapter<Option> {
         // Get the CheckedTextView and then set the text (item text) and tag (item id) values
         CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checkedTextView);
         checkedTextView.setText(option.text);
-        checkedTextView.setTag(option.id);
+        checkedTextView.setTag(option);
+        checkedTextView.setBackgroundColor(Color.parseColor("#fff3f3f3"));
+
+        // Highlight the option the user selected if the question has already been attempted
+        QuestionActivity questionActivity = (QuestionActivity)context;
+        if(questionActivity.answers.containsKey(questionActivity.currQuesion.id)){
+            if(questionActivity.answers.get(questionActivity.currQuesion.id) == option.id){
+                checkedTextView.setChecked(true);
+                checkedTextView.setBackgroundColor(Color.CYAN);
+            }
+        }
 
         return convertView;
     }
