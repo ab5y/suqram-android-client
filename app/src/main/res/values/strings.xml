@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PMPQuiz</string>
-    <string name="url">http://0743c480.ngrok.io/</string>
+    <string name="url">http://63b00aa8.ngrok.io/</string>
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
@@ -16,4 +16,8 @@
         completions."
     </string>
     <string name="dialog_close_button">Done</string>
+
+    <!-- Strings related to networking -->
+    <string name="POST">POST</string>
+    <string name="DELETE">DELETE</string>
 </resources>

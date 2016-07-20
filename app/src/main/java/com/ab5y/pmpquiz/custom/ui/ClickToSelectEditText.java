@@ -78,7 +78,6 @@ public class ClickToSelectEditText<T extends Listable> extends EditText {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "Lister. Listening.");
                 AlertDialog.Builder builder = new AlertDialog.Builder(v.getContext());
                 builder.setTitle(mHint);
                 builder.setItems(mListableItems, new DialogInterface.OnClickListener() {

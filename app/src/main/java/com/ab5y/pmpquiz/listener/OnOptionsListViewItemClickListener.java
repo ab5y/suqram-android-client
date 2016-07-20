@@ -39,6 +39,7 @@ public class OnOptionsListViewItemClickListener implements AdapterView.OnItemCli
         Option option = (Option) checkedTextViewItem.getTag();
         this.id = option.id;
 
+        // Uncheck and unhighlight any other item that might be checked
         List<Option> optionList = parentActivity.optionsMap.get(parentActivity.currQuesion.id);
         int count = optionList.size();
         ViewParent viewParent = view.getParent();
@@ -46,7 +47,7 @@ public class OnOptionsListViewItemClickListener implements AdapterView.OnItemCli
             CheckedTextView ctv = ((CheckedTextView) ((View)viewParent).findViewWithTag(optionList.get(i)));
             if (ctv != null){
                 ctv.setChecked(false);
-                ctv.setBackgroundColor(Color.parseColor("#fff3f3f3"));
+                ctv.setBackgroundColor(Color.TRANSPARENT); // Color.parseColor("#fff3f3f3")
             }
         }
 

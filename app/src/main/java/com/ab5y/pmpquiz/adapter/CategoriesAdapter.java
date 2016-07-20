@@ -37,19 +37,18 @@ public class CategoriesAdapter extends ArrayAdapter<Category> {
         if (convertView == null) {
             LayoutInflater inflater = ((Activity)context).getLayoutInflater();
             convertView = inflater.inflate(resource, parentView, false);
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.category = data.get(position);
-            viewHolder.tv_category_name = (TextView) convertView.findViewById(R.id.tv_category_name);
-            viewHolder.tv_category_name.setText(viewHolder.category.name);
-            convertView.setTag(viewHolder);
+            mainViewHolder = new ViewHolder();
+            mainViewHolder.category = data.get(position);
+            mainViewHolder.tv_category_name = (TextView) convertView.findViewById(R.id.tv_category_name);
+            convertView.setTag(mainViewHolder);
         } else {
             mainViewHolder = (ViewHolder) convertView.getTag();
-            mainViewHolder.tv_category_name.setText(mainViewHolder.category.name);
         }
+        mainViewHolder.tv_category_name.setText(mainViewHolder.category.name);
         return convertView;
     }
 
-    public class ViewHolder {
+    static class ViewHolder {
         Category category;
         TextView tv_category_name;
     }

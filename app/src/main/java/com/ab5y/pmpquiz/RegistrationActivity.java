@@ -63,7 +63,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
         URL = getResources().getString(R.string.url);
 
-        Log.e(TAG, "Comes here");
         getUserTypes();
 
         _signupButton.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +82,6 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void signup() {
-        Log.d(TAG, "Signup");
         if (!validate()) {
             onSignupFailed(null);
             return;
@@ -123,7 +121,6 @@ public class RegistrationActivity extends AppCompatActivity {
         intent.putExtra("username", _usernameText.getText().toString());
         intent.putExtra("password", _passwordText.getText().toString());
         setResult(RESULT_OK, intent);
-        Log.e(TAG, "Success. Going back to login, bye!");
         finish();
     }
 
@@ -165,7 +162,6 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void getUserTypes() {
-        Log.e(TAG, "In here, too, boss");
         final ProgressDialog progressDialog = new ProgressDialog(RegistrationActivity.this, R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Getting the cool ingredients...");
@@ -176,7 +172,6 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     public void initliatizeUserTypeDropDown() {
-        Log.e(TAG, "Initializer. Initializes");
         if (userTypeList != null){
             _usertypeText.setItems(userTypeList);
             _usertypeText.setOnItemSelectedListener(new ClickToSelectEditText.OnItemSelectedListener<UserType>() {
@@ -246,14 +241,12 @@ public class RegistrationActivity extends AppCompatActivity {
                                         )
                                 );
                             }
-                            Log.e(TAG, "Check this");
                             initliatizeUserTypeDropDown();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }else if (result.equals("registered")) {
-                    Log.e(TAG, "Comes here because result is "+result);
                     onSignupSuccess();
                 } else {
                     onSignupFailed(result);

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dip">
+
+    <TextView
+        android:id="@+id/followee_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:typeface="sans"/>
+
+    <CheckBox
+        android:id="@+id/cb_followee_follow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/followee_username"
+        android:layout_alignParentRight="true"
+        android:button="@drawable/ic_add_circle_outline_black_24dp"/>
+
+    <TextView
+        android:id="@+id/followee_fullname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/followee_username"
+        android:layout_marginTop="5dip"
+        android:textColor="#343434"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/followee_num_categories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/followee_fullname"
+        android:layout_alignBottom="@+id/followee_fullname"
+        android:layout_alignParentRight="true"
+        android:textColor="#343434"
+        android:textSize="12sp"/>
+
+</RelativeLayout>

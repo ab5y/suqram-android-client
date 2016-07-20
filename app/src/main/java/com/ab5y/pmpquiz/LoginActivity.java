@@ -137,7 +137,6 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences mPreference = PreferenceManager.getDefaultSharedPreferences(this);
         mPreference.edit().putBoolean("loggedin", true).apply();
         mPreference.edit().putString("Cookie", cookie).apply();
-        Intent intent = getIntent();
         this.setResult(RESULT_OK);
         finish();
     }

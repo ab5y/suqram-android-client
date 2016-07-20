@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import com.ab5y.pmpquiz.adapter.CategoriesAdapter;
 import com.ab5y.pmpquiz.models.Category;
+import com.ab5y.pmpquiz.models.Followee;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,10 +31,13 @@ import okhttp3.Response;
 public class CategoriesActivity extends AppCompatActivity {
 
     public List<Category> categories = null;
+//    public List<Followee> followees = null;
+    public List<Integer> followeesIDs = null;
 
-    private static final String LOG = "CATEGORIESACTIVITY";
+    private static final String TAG = "CATEGORIESACTIVITY";
     public static final String CATEGORYID = "com.ab5y.pmpquiz.CATEGORYID";
     private static final int LOGIN_REQUEST = 1;
+    private static final int GET_FOLLOWEES = 2;
 
     private OkHttpClient client = new OkHttpClient();
     private String cookie;
@@ -46,7 +50,7 @@ public class CategoriesActivity extends AppCompatActivity {
         cookie = mPreference.getString("Cookie", null);
         if (cookie == null){
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivityForResult(intent, 1);
+            startActivityForResult(intent, LOGIN_REQUEST);
         } else {
             client = new OkHttpClient().newBuilder()
                     .addInterceptor(new Interceptor() {
@@ -61,7 +65,7 @@ public class CategoriesActivity extends AppCompatActivity {
                     })
                     .build();
             setContentView(R.layout.activity_categories);
-            getCategories();
+            getFollowees();
         }
     }
 
@@ -84,12 +88,49 @@ public class CategoriesActivity extends AppCompatActivity {
                         })
                         .build();
                 setContentView(R.layout.activity_categories);
-                getCategories();
+                getFollowees();
+            }
+        else if (requestCode == GET_FOLLOWEES)
+            if (resultCode == RESULT_OK) {
+
             }
     }
 
-    private void getCategories() {
-        new getCategoriesFromServer().execute(getResources().getString(R.string.url)+"categories");
+    private void getFollowees() {
+        Log.e(TAG, "GETTING ME SOME FOLLOWEES NIGGA");
+        new serverTask().execute(getString(R.string.url)+"followees");
+    }
+
+    private void onGetFolloweesIDsSuccess() {
+        if (followeesIDs.isEmpty()) {
+            Log.e(TAG, "NO FOLLOWEES NIGGA");
+            Intent intent = new Intent(this, FollowActivity.class);
+            startActivityForResult(intent, GET_FOLLOWEES);
+        }
+        else {
+            categories = new ArrayList<>();
+            for (Integer followee_id : followeesIDs) {
+                getCategories(followee_id);
+            }
+        }
+    }
+
+//    private void onGetFolloweesSuccess() {
+//        if (followees.isEmpty()) {
+//            Log.e(TAG, "NO FOLLOWEES NIGGA");
+//            Intent intent = new Intent(this, FollowActivity.class);
+//            startActivityForResult(intent, GET_FOLLOWEES);
+//        } else {
+//            Log.e(TAG, "SOME FOLLOWEES NIGGA "+followees.size());
+//            categories = new ArrayList<>();
+//            for (Followee followee : followees) {
+//                getCategories(followee.getUserID());
+//            }
+//        }
+//    }
+
+    private void getCategories(int creatorID) {
+        new serverTask().execute(getResources().getString(R.string.url)+"categories?creator_id="+creatorID);
     }
 
     public void displayCategories() {
@@ -109,21 +150,19 @@ public class CategoriesActivity extends AppCompatActivity {
         }
     }
 
-    final class getCategoriesFromServer extends AsyncTask<String, Integer, String> {
+    final class serverTask extends AsyncTask<String, Integer, String> {
 
         private Exception exception;
         private String contentType;
 
         @Override
         protected String doInBackground(String... params) {
-            Log.e(LOG, "Cookie value is "+cookie);
             Request request = new Request.Builder()
                     .url(params[0])
                     .build();
             try {
                 Response response = client.newCall(request).execute();
                 this.contentType = response.header("Content-Type");
-//                Log.e(LOG, response.body().string());
                 return response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -141,13 +180,29 @@ public class CategoriesActivity extends AppCompatActivity {
                     JSONObject jsonObject = new JSONObject(jsonString);
                     if (jsonObject.has("categories")) {
                         JSONArray jsonArray = jsonObject.getJSONArray("categories");
-                        categories = new ArrayList<>();
                         categories.add(new Category(0, "All"));
                         for (int i = 0; i < jsonArray.length(); i++) {
                             JSONObject jsonArrObj = jsonArray.getJSONObject(i);
                             categories.add(new Category(jsonArrObj.getInt("id"), jsonArrObj.getString("name")));
                         }
                         displayCategories();
+                    } else if (jsonObject.has("followees")) {
+                        followeesIDs = new ArrayList<>();
+                        JSONArray jsonArray = jsonObject.getJSONArray("followees");
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject followeeJson = jsonArray.getJSONObject(i);
+                            followeesIDs.add(followeeJson.getInt("followee_id"));
+//                            JSONObject followeeJson = jsonArray.getJSONObject(i);
+//                            followees.add(
+//                                    new Followee(
+//                                            followeeJson.getString("name"),
+//                                            followeeJson.getString("full_name"),
+//                                            followeeJson.getInt("id"),
+//                                            followeeJson.getInt("type_id")
+//                                    )
+//                            );
+                        }
+                        onGetFolloweesIDsSuccess();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();

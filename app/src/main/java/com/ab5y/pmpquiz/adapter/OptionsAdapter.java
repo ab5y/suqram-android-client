@@ -57,7 +57,6 @@ public class OptionsAdapter extends ArrayAdapter<Option> {
         CheckedTextView checkedTextView = (CheckedTextView) convertView.findViewById(R.id.checkedTextView);
         checkedTextView.setText(option.text);
         checkedTextView.setTag(option);
-        checkedTextView.setBackgroundColor(Color.parseColor("#fff3f3f3"));
 
         // Highlight the option the user selected if the question has already been attempted
         QuestionActivity questionActivity = (QuestionActivity)context;
@@ -65,6 +64,9 @@ public class OptionsAdapter extends ArrayAdapter<Option> {
             if(questionActivity.answers.get(questionActivity.currQuesion.id) == option.id){
                 checkedTextView.setChecked(true);
                 checkedTextView.setBackgroundColor(Color.CYAN);
+            } else {
+                checkedTextView.setBackgroundColor(Color.TRANSPARENT); // Color.parseColor("#fff3f3f3")
+                checkedTextView.setChecked(false);
             }
         }
 

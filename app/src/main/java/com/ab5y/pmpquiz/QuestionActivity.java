@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ThemedSpinnerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -49,7 +50,7 @@ import okhttp3.internal.framed.Header;
 
 public class QuestionActivity extends AppCompatActivity {
 
-    private static final String LOG = "QUESTIONACTIVITY";
+    private static final String TAG = "QUESTIONACTIVITY";
     private String URL;
     private static final int LOGIN_REQUEST = 1;
     private static final String startTime = GregorianCalendar.getInstance().getTime().toString();
@@ -270,6 +271,7 @@ public class QuestionActivity extends AppCompatActivity {
         private Exception exception;
         private final ProgressBar progressBar;
         private int numQuestions;
+        private String contentType;
 
         public postToServer(ProgressBar progressBar, int numQuestions){
             this.progressBar = progressBar;
@@ -289,11 +291,12 @@ public class QuestionActivity extends AppCompatActivity {
                 Request request = new Request.Builder()
                         .url(params[0]) //url
                         .post(body)
-                        .addHeader("cookies", cookie)
+//                        .addHeader("cookies", cookie)
                         .build();
                 Response response = client.newCall(request).execute();
                 publishProgress();
-                return  response.body().string();
+                this.contentType = response.header("Content-Type");
+                return response.body().string();
             } catch (Exception e) {
                 this.exception = e;
                 e.printStackTrace();
@@ -307,7 +310,20 @@ public class QuestionActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result){
-            if (result != null) Toast.makeText(QuestionActivity.this, "Sent successfully!", Toast.LENGTH_SHORT).show();
+            if (result != null) {
+                Toast.makeText(QuestionActivity.this, "Sent successfully!", Toast.LENGTH_SHORT).show();
+                if (contentType.contains("application/json; charset=UTF-8")){
+                    String jsonString = result.trim()
+                            .substring(result.indexOf("{"), result.lastIndexOf("}") + 1)
+                            .replace("\\", "");
+                    try {
+                        JSONObject jsonObject = new JSONObject(jsonString);
+                        Log.e(TAG, "You scored "+jsonObject.getInt("correct")+" out of "+jsonObject.getInt("attempted")+" attempted questions!");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
             else Toast.makeText(QuestionActivity.this, "Oops! Something went wrong :(", Toast.LENGTH_SHORT).show();
         }
     }
@@ -335,7 +351,7 @@ public class QuestionActivity extends AppCompatActivity {
             try{
                 Request request = new Request.Builder()
                         .url(params[0])
-                        .addHeader("cookies", cookie)
+//                        .addHeader("cookies", cookie)
                         .build();
 
                 Response response = client.newCall(request).execute();
